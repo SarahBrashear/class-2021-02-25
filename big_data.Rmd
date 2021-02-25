@@ -28,6 +28,39 @@ x <- read_csv("~/data/census/censoc_dmf_v2/censoc_dmf_v2.csv",
                                     weight_conservative = col_double()))
 ```
 
+Create a 1% sample of this data, called 'small'.
 
+make a bar plot of dmonth using 'small'
+
+```{r}
+small <- x %>%
+  slice_sample(n = 74194) 
+```
+
+```{r}
+small %>%
+  ggplot(mapping = aes(x = dmonth)) +
+  geom_bar()
+```
+
+```{r}
+small %>%
+  filter(dmonth %in% c(1, 7)) %>%
+  group_by(dyear, dmonth) %>%
+  summarize(deaths = n()) %>%
+  pivot_wider(names_from = dmonth,
+              names_prefix = "month",
+              values_from = deaths) %>%
+  mutate(death_ratio = month1 / month7)
+```
+
+```{r}
+small %>%
+  ggplot(mapping = aes(x = death_ratio,
+                       y = dyear)) +
+  geom_point() +
+  geom_smooth(method = "lm", 
+              formula = y ~ x)
+```
 
 
